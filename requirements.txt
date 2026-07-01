@@ -1,6 +1,5 @@
-Flask
+streamlit
 tensorflow-cpu
 numpy
 Pillow
-gunicorn
-Werkzeug
+gdown
