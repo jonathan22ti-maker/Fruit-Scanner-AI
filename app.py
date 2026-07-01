@@ -108,7 +108,7 @@ if input_image is not None:
         st.image(img, caption="Gambar yang Dipindai", use_container_width=True)
     
     with col2:
-        st.markdown(f"### Hasil: <span style='color:#10b981; font-size:28px;'>**{result}**</span>", unsafe_allow_index=True)
+        st.markdown(f"### Hasil: <span style='color:#10b981; font-size:28px;'>**{result}**</span>", unsafe_allow_html=True)
         st.write(f"Tingkat Keyakinan (Akurasi): {confidence:.2f}%")
         
         # Progress bar interaktif untuk akurasi
