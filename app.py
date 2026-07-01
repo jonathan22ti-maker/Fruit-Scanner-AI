@@ -35,7 +35,7 @@ st.markdown("""
         box-shadow: 0 0 20px rgba(16, 185, 129, 0.1);
     }
     </style>
-""", unsafe_allow_index=True)
+""", unsafe_allow_html=True)
 
 # Header Aplikasi
 st.title("🍎 Fruit Scanner AI")
