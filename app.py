@@ -51,7 +51,7 @@ def load_fruit_model():
     if not os.path.exists(file_path):
         with st.spinner("Sedang mengunduh model AI dari Google Drive... (Ini hanya terjadi sekali)"):
             # PERHATIAN: Ganti teks di bawah ini dengan ID File Google Drive Anda!
-            file_id = '1AbCdEfGhIjKlMnOpQrStUvWxYz' 
+            file_id = '1qagLF58FPRg6oUJliaGwyKlWzGcrkgak' 
             url = f'https://drive.google.com/uc?id={file_id}'
             gdown.download(url, file_path, quiet=False)
             
