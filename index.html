@@ -1,0 +1,134 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Fruit Scanner AI</title>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;500;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='style.css') }}">
+</head>
+<body>
+
+    <div id="loadingOverlay" class="overlay">
+        <div class="spinner"></div>
+        <h2>AI is analyzing...</h2>
+        <p>Extracting features from the image</p>
+    </div>
+
+    <div class="container">
+        <header>
+            <h1><i class="fa-solid fa-microchip icon-glow"></i> Fruit Scanner <span class="highlight">AI</span></h1>
+            <p>Powered by Deep Learning Vision</p>
+        </header>
+
+        <div class="card glass-panel">
+            <div class="scanner-container">
+                <video id="webcam" autoplay playsinline></video>
+                <div class="scanner-laser"></div>
+                <canvas id="canvas" style="display:none;"></canvas>
+            </div>
+
+            <div class="controls">
+                <button type="button" id="captureBtn" class="btn btn-glow"><i class="fa-solid fa-camera"></i> Scan Object</button>
+                <button type="button" id="uploadTriggerBtn" class="btn btn-outline"><i class="fa-solid fa-folder-open"></i> Upload File</button>
+            </div>
+
+            <form id="uploadForm" action="/predict" method="post" enctype="multipart/form-data" style="display:none;">
+                <input type="file" name="file" id="fileInput" accept="image/*" required>
+            </form>
+        </div>
+
+        {% if prediction %}
+            <div class="card glass-panel result-box fade-in">
+                <div class="result-grid">
+                    <div class="img-preview">
+                        <img src="{{ url_for('static', filename='../uploads/' + image_file) }}" alt="Scanned Fruit">
+                        <div class="scan-overlay"></div>
+                    </div>
+                    <div class="prediction-info">
+                        <h3>Match Found</h3>
+                        <h2 class="highlight-text">{{ prediction }}</h2>
+                        
+                        <div class="confidence-container">
+                            <div class="confidence-header">
+                                <span>Accuracy Confidence</span>
+                                <span>{{ confidence }}%</span>
+                            </div>
+                            <div class="progress-bar-bg">
+                                <div class="progress-bar-fill" style="width: {{ confidence }}%;"></div>
+                            </div>
+                        </div>
+
+                        <a href="/" class="btn btn-outline reset-btn"><i class="fa-solid fa-rotate-right"></i> New Scan</a>
+                    </div>
+                </div>
+            </div>
+        {% endif %}
+
+    </div>
+
+    <script>
+        const video = document.getElementById('webcam');
+        const captureBtn = document.getElementById('captureBtn');
+        const uploadTriggerBtn = document.getElementById('uploadTriggerBtn');
+        const fileInput = document.getElementById('fileInput');
+        const uploadForm = document.getElementById('uploadForm');
+        const canvas = document.getElementById('canvas');
+        const loadingOverlay = document.getElementById('loadingOverlay');
+
+        // Start Webcam
+        if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+            navigator.mediaDevices.getUserMedia({ video: { facingMode: "environment" } })
+            .then(function(stream) {
+                video.srcObject = stream;
+            })
+            .catch(function(err) {
+                console.log("Camera access denied: " + err);
+                document.querySelector('.scanner-laser').style.display = 'none';
+            });
+        }
+
+        // Show loading screen function
+        function showLoading() {
+            loadingOverlay.style.display = 'flex';
+        }
+
+        // Capture Button Event
+        captureBtn.addEventListener('click', () => {
+            if(!video.srcObject) {
+                alert("Camera not active. Please use Upload File.");
+                return;
+            }
+            
+            showLoading(); // Trigger loading screen
+            
+            canvas.width = video.videoWidth;
+            canvas.height = video.videoHeight;
+            canvas.getContext('2d').drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            canvas.toBlob(blob => {
+                const file = new File([blob], "scan_capture.jpg", { type: "image/jpeg" });
+                const dataTransfer = new DataTransfer();
+                dataTransfer.items.add(file);
+                fileInput.files = dataTransfer.files;
+
+                uploadForm.submit();
+            }, 'image/jpeg');
+        });
+
+        // Upload Button Event
+        uploadTriggerBtn.addEventListener('click', () => {
+            fileInput.click();
+        });
+
+        // Trigger loading when user selects a file manually
+        fileInput.addEventListener('change', () => {
+            if(fileInput.files.length > 0) {
+                showLoading();
+                uploadForm.submit();
+            }
+        });
+    </script>
+</body>
+</html>
