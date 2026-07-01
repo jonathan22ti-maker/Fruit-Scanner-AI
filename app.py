@@ -39,7 +39,7 @@ st.markdown("""
 
 # Header Aplikasi
 st.title("🍎 Fruit Scanner AI")
-st.write("Powered by Deep Learning Vision • UAS Computer Vision")
+st.write("Powered by CHEESE • UAS Computer Vision")
 st.markdown("---")
 
 # 2. Load Model AI dari Google Drive (Otomatis didownload jika belum ada)
@@ -49,7 +49,7 @@ def load_fruit_model():
     
     # Mengecek apakah file model sudah ada
     if not os.path.exists(file_path):
-        with st.spinner("Sedang mengunduh model AI dari Google Drive... (Ini hanya terjadi sekali)"):
+        with st.spinner("Cheese is downloading the AI ​​model from Google Drive... (This only happens once)"):
             # PERHATIAN: Ganti teks di bawah ini dengan ID File Google Drive Anda!
             file_id = '1qagLF58FPRg6oUJliaGwyKlWzGcrkgak' 
             url = f'https://drive.google.com/uc?id={file_id}'
@@ -61,7 +61,7 @@ def load_fruit_model():
 try:
     model = load_fruit_model()
 except Exception as e:
-    st.error(f"Gagal memuat model. Error: {e}")
+    st.error(f"Failed to load model. Error: {e}")
     st.stop()
 
 # Class names sesuai dengan kode Flask Anda
@@ -72,11 +72,11 @@ class_names = [
 ]
 
 # 3. Input Gambar (Kamera & File Uploader)
-st.subheader("📸 Pindai Objek")
-img_file = st.camera_input("Arahkan kamera ke buah")
+st.subheader("📸 Scanning fruits?")
+img_file = st.camera_input("Place the fruit in front of the camera.")
 
 # Fitur opsional jika kamera tidak aktif
-uploaded_file = st.file_uploader("Atau unggah file gambar secara manual", type=["jpg", "jpeg", "png"])
+uploaded_file = st.file_uploader("Or upload the image file manually.", type=["jpg", "jpeg", "png"])
 
 # Tentukan sumber gambar yang digunakan
 input_image = img_file if img_file is not None else uploaded_file
@@ -87,7 +87,7 @@ if input_image is not None:
     img = Image.open(input_image)
     
     # Tampilkan Animasi Loading saat AI memproses
-    with st.spinner("AI sedang menganalisis... Mengekstrak fitur gambar"):
+    with st.spinner("AI is analyzing... Extracting image features... Cheese wants you to wait for a while :P"):
         # Preprocessing gambar (sama persis dengan Flask Anda target_size=(224, 224))
         img_resized = img.resize((224, 224))
         img_array = tf.keras.preprocessing.image.img_to_array(img_resized)
@@ -101,15 +101,15 @@ if input_image is not None:
 
     # 5. Tampilan Hasil Prediksi yang Keren
     st.markdown("---")
-    st.success("✅ Objek Berhasil Diidentifikasi!")
+    st.success("✅ The object was successfully identified.!")
     
     col1, col2 = st.columns(2)
     with col1:
-        st.image(img, caption="Gambar yang Dipindai", use_container_width=True)
+        st.image(img, caption="Scanned image", use_container_width=True)
     
     with col2:
         st.markdown(f"### Hasil: <span style='color:#10b981; font-size:28px;'>**{result}**</span>", unsafe_allow_html=True)
-        st.write(f"Tingkat Keyakinan (Akurasi): {confidence:.2f}%")
+        st.write(f"Confidence level (Accuracy): {confidence:.2f}%")
         
         # Progress bar interaktif untuk akurasi
         st.progress(int(confidence))
